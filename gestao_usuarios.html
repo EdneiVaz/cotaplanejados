@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários - CotaPlanejados.Gem</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #121927;
+            --panel-bg: #1e293b;
+            --accent-orange: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.5);
+            --text-white: #ffffff;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --modal-overlay: rgba(0, 0, 0, 0.9);
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-dark); color: var(--text-white); }
+
+        /* Sidebar */
+        .sidebar { width: 260px; height: 100vh; background: var(--panel-bg); position: fixed; border-right: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-header { padding: 30px 25px; font-size: 1.4rem; font-weight: bold; color: var(--text-white); }
+        .menu-item { padding: 16px 25px; display: flex; align-items: center; color: var(--text-muted); text-decoration: none; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: #2d3748; color: var(--accent-orange); border-left-color: var(--accent-orange); }
+        .menu-item i { margin-right: 15px; width: 20px; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; padding: 40px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+
+        /* Botões */
+        .btn-vivid {
+            background: var(--accent-orange); color: var(--bg-dark); padding: 12px 25px; border-radius: 12px; border: none; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); transition: 0.3s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .btn-vivid:hover { transform: translateY(-3px); box-shadow: 0 8px 25px var(--accent-glow); }
+
+        /* Tabela */
+        .table-card { background: var(--panel-bg); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 20px; text-align: left; background: rgba(0,0,0,0.2); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .status-badge { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .active-badge { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .pending-badge { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); }
+
+        .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: none; cursor: pointer; transition: 0.2s; color: white; margin-right: 8px; font-size: 1rem; }
+        .btn-edit { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .btn-edit:hover { background: var(--success); color: white; box-shadow: 0 0 15px var(--success); }
+        .btn-delete { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .btn-delete:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
+        .btn-plus { background: rgba(245, 158, 11, 0.15); color: var(--accent-orange); }
+        .btn-plus:hover { background: var(--accent-orange); color: white; box-shadow: 0 0 15px var(--accent-orange); }
+
+        /* Modal Centralizado */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: var(--modal-overlay); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--panel-bg); width: 450px; padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .modal-content h2 { margin-top: 0; color: var(--accent-orange); font-size: 1.5rem; margin-bottom: 25px; }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; font-size: 1.5rem; transition: 0.3s; }
+        .close-modal:hover { color: var(--danger); }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
+        input { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid #334155; border-radius: 10px; color: white; box-sizing: border-box; outline: none; font-size: 1rem; }
+        input:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">CotaPlanejados.Gem</div>
+        <nav style="margin-top:20px;">
+            <a href="admin.html" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="gestao_usuarios.html" class="menu-item active"><i class="fas fa-users-cog"></i> Usuários</a>
+            <a href="notificacoes.html" class="menu-item"><i class="fas fa-bell"></i> Notificações</a>
+            <a href="config_sistema.html" class="menu-item"><i class="fas fa-cog"></i> Configurações</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="header-flex">
+            <div>
+                <h1>Gestão de Usuários</h1>
+                <p style="color: var(--text-muted);">Controle de acessos e créditos da plataforma.</p>
+            </div>
+            <button class="btn-vivid" onclick="openInviteModal()">
+                <i class="fas fa-user-plus"></i> Convidar Novo Usuário
+            </button>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário / Empresa</th>
+                        <th>Saldo Atual</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="userList">
+                    <tr id="u-101">
+                        <td>
+                            <strong id="name-u-101">Marcenaria Exemplo</strong><br>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">contato@marcenaria.com</span>
+                        </td>
+                        <td><strong id="credits-u-101" style="color: var(--accent-orange);">50 Créditos</strong></td>
+                        <td><span class="status-badge active-badge">Ativo</span></td>
+                        <td>
+                            <button class="btn-icon btn-edit" onclick="openEditModal('u-101')" title="Editar Nome"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn-icon btn-plus" onclick="openCreditModal('u-101')" title="Adicionar Créditos"><i class="fas fa-plus"></i></button>
+                            <button class="btn-icon btn-delete" onclick="openDeleteModal('u-101')" title="Remover Usuário"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Ação</h2>
+            <div id="modalBody"></div>
+            <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+                <button onclick="closeModal()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-weight: bold;">CANCELAR</button>
+                <button class="btn-vivid" id="modalConfirmBtn">CONFIRMAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização com sua Chave Pública (image_1456a5.png)
+        emailjs.init("V7bkBmkenV7LYQTnG");
+
+        let currentUserId = null;
+
+        function closeModal() {
+            document.getElementById('actionModal').style.display = 'none';
+        }
+
+        // --- NOVO CONVITE (Com envio de e-mail real) ---
+        function openInviteModal() {
+            document.getElementById('modalTitle').innerText = "Convidar Parceiro";
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label>E-mail do Destinatário</label>
+                    <input type="email" id="newEmail" placeholder="email@cliente.com">
+                </div>
+                <div class="form-group">
+                    <label>Nome ou Empresa</label>
+                    <input type="text" id="newName" placeholder="Ex: Marcenaria Silva">
+                </div>
+                <div class="form-group">
+                    <label>Créditos de Boas-vindas</label>
+                    <input type="number" id="newCredits" value="10">
+                </div>
+            `;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.innerText = "ENVIAR CONVITE AGORA";
+            btn.onclick = processInvite;
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        async function processInvite() {
+            const email = document.getElementById('newEmail').value;
+            const name = document.getElementById('newName').value;
+            const credits = document.getElementById('newCredits').value;
+
+            if(!email || !name) { alert("Preencha os campos obrigatórios."); return; }
+
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+
+            try {
+                // Usando seu Service ID e Template ID (conforme image_144f47.png)
+                await emailjs.send("service_mift724", "template_vo7nftz", {
+                    to_email: email,
+                    to_name: name,
+                    bonus_credits: credits
+                });
+
+                const rowId = "u-" + Date.now();
+                const row = `
+                    <tr id="${rowId}">
+                        <td><strong id="name-${rowId}">${name}</strong><br><span style="color: var(--text-muted); font-size: 0.8rem;">${email}</span></td>
+                        <td><strong id="credits-${rowId}" style="color: var(--accent-orange);">${credits} Créditos</strong></td>
+                        <td><span class="status-badge pending-badge">Pendente</span></td>
+                        <td>
+                            <button class="btn-icon btn-edit" onclick="openEditModal('${rowId}')"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn-icon btn-plus" onclick="openCreditModal('${rowId}')"><i class="fas fa-plus"></i></button>
+                            <button class="btn-icon btn-delete" onclick="openDeleteModal('${rowId}')"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>`;
+                document.getElementById('userList').insertAdjacentHTML('afterbegin', row);
+                closeModal();
+                alert("Convite enviado com sucesso para " + name);
+            } catch (error) {
+                alert("Falha ao enviar e-mail. Verifique a conexão.");
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "ENVIAR CONVITE AGORA";
+            }
+        }
+
+        // --- ADICIONAR CRÉDITOS (Pop-up em vez de prompt) ---
+        function openCreditModal(id) {
+            currentUserId = id;
+            document.getElementById('modalTitle').innerText = "Recarregar Saldo";
+            document.getElementById('modalBody').innerHTML = `
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Quantos créditos deseja ADICIONAR ao saldo atual?</p>
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" id="addAmount" value="10" autofocus>
+                </div>
+            `;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.innerText = "ADICIONAR CRÉDITOS";
+            btn.onclick = () => {
+                const amount = parseInt(document.getElementById('addAmount').value);
+                const element = document.getElementById('credits-' + currentUserId);
+                const current = parseInt(element.innerText);
+                element.innerText = (current + amount) + " Créditos";
+                closeModal();
+            };
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        // --- EDITAR NOME ---
+        function openEditModal(id) {
+            currentUserId = id;
+            const currentName = document.getElementById('name-' + id).innerText;
+            document.getElementById('modalTitle').innerText = "Editar Identificação";
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label>Novo Nome ou Razão Social</label>
+                    <input type="text" id="editName" value="${currentName}">
+                </div>
+            `;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.innerText = "SALVAR ALTERAÇÃO";
+            btn.onclick = () => {
+                document.getElementById('name-' + currentUserId).innerText = document.getElementById('editName').value;
+                closeModal();
+            };
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        // --- EXCLUIR (Pop-up em vez de confirm) ---
+        function openDeleteModal(id) {
+            currentUserId = id;
+            document.getElementById('modalTitle').innerText = "Confirmar Exclusão";
+            document.getElementById('modalBody').innerHTML = `
+                <p style="color: var(--text-white);">Você está prestes a remover permanentemente este usuário e revogar seu acesso.</p>
+                <p style="color: var(--danger); font-weight: bold;">Deseja continuar?</p>
+            `;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.innerText = "SIM, REMOVER";
+            btn.style.background = "var(--danger)";
+            btn.onclick = () => {
+                document.getElementById(currentUserId).remove();
+                btn.style.background = "var(--accent-orange)";
+                closeModal();
+            };
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

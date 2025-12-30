@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Detalhado - CotaPlanejados.Gem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; 
+            color: #f1f5f9; 
+            margin: 0; 
+            padding-top: 80px; 
+            overflow-x: hidden;
+        }
+        
+        .header-gem { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 100; 
+            background: rgba(15, 23, 42, 0.9); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid #1e293b; 
+        }
+
+        .main-content { 
+            padding: 2rem; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 320px 1fr; 
+            gap: 2rem; 
+            align-items: start;
+        }
+
+        .sidebar-fixed {
+            position: sticky;
+            top: 100px; 
+            height: calc(100vh - 120px); 
+            overflow-y: auto;
+        }
+
+        .card-gem { background: #1e293b; border: 1px solid #334155; border-radius: 1.5rem; overflow: hidden; }
+        .big-price-label { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; color: #64748b; margin-bottom: 0.5rem; }
+        .big-price-value { font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -0.05em; }
+
+        /* Estilos de Tabela Técnica */
+        .tech-table { width: 100%; border-collapse: collapse; }
+        .tech-table th { text-align: left; padding: 12px; font-size: 10px; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #334155; }
+        .tech-table td { padding: 12px; font-size: 12px; border-bottom: 1px solid #334155; }
+
+        .input-custom {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid #334155;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-custom:focus {
+            border-color: #f59e0b;
+            outline: none;
+        }
+
+        .btn-reload { transition: all 0.3s ease; }
+        .btn-reload:hover { transform: scale(1.05); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="header-gem px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <h1 class="text-xl font-black italic text-white leading-none tracking-tighter">CotaPlanejados<span class="text-amber-500">.Gem</span></h1>
+            <div class="hidden md:flex gap-6 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <a href="dashboard.html" class="hover:text-white transition-colors">Projetos</a>
+                <a href="base_materiais.html" class="hover:text-white transition-colors">Base Master</a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button onclick="abrirModal()" class="btn-reload bg-amber-500 text-slate-900 px-4 py-2 rounded-xl flex items-center gap-2 font-black shadow-lg shadow-amber-500/20">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <span class="text-[10px] uppercase">Recarregar</span>
+            </button>
+            <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-700 text-right">
+                <p class="text-[8px] font-black text-slate-500 uppercase">Saldo</p>
+                <p class="text-sm font-black text-amber-500 leading-none">4.810</p>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <aside class="sidebar-fixed space-y-6">
+            <div class="card-gem p-4 bg-slate-800/40 border-l-4 border-l-amber-500">
+                <p class="text-[10px] font-bold text-white mb-3 tracking-widest uppercase italic">Projeto Analisado</p>
+                <h2 class="text-sm font-black text-white uppercase mb-1">Loft Industrial 402</h2>
+                <p class="text-[10px] text-slate-500 font-bold uppercase mb-4">Arq. Ricardo Santos</p>
+                <div class="pt-4 border-t border-slate-700 space-y-2">
+                    <div class="flex justify-between text-[10px] font-bold">
+                        <span class="text-slate-500 uppercase">Custo Total</span>
+                        <span class="text-white">R$ 14.250</span>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-bold">
+                        <span class="text-slate-500 uppercase">Venda Sugerida</span>
+                        <span class="text-amber-500">R$ 28.500</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/30 p-4 rounded-2xl border border-slate-700">
+                <p class="text-[9px] font-black text-slate-500 uppercase mb-2 text-center tracking-widest">Reanálise Gratuita</p>
+                <div class="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-amber-500 w-1/2"></div>
+                </div>
+                <p class="text-[9px] text-slate-400 mt-2 italic text-center">Você possui 1 reanálise disponível</p>
+            </div>
+        </aside>
+
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card-gem p-8 border-l-8 border-l-slate-600 bg-gradient-to-br from-slate-800/40 to-transparent">
+                    <p class="big-price-label">Investimento Estimado (Custo)</p>
+                    <p class="big-price-value text-white">R$ 14.250,00</p>
+                </div>
+                <div class="card-gem p-8 border-l-8 border-l-amber-500 bg-gradient-to-br from-amber-900/10 to-transparent shadow-xl shadow-amber-950/20">
+                    <p class="big-price-label text-amber-500 font-black">Venda Sugerida (Mark-up 2.0)</p>
+                    <p class="big-price-value text-amber-500">R$ 28.500,00</p>
+                </div>
+            </div>
+
+            <div class="card-gem p-0 border border-slate-700/50">
+                <div class="p-6 border-b border-slate-700 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-list-check text-amber-500"></i>
+                        <h3 class="text-sm font-black text-white italic uppercase tracking-tighter">Explosão de Materiais Auditada pelo Gem</h3>
+                    </div>
+                    <span class="text-[9px] font-black bg-slate-900 px-3 py-1 rounded-full text-emerald-500 border border-emerald-500/20 uppercase tracking-widest">Preços Atualizados Hoje</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="tech-table">
+                        <thead>
+                            <tr>
+                                <th>Item / Especificação</th>
+                                <th>Marca</th>
+                                <th>Qtd / Medida</th>
+                                <th>Valor Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-bold">MDF Branco TX 15mm (Caixaria)</td>
+                                <td>Arauco</td>
+                                <td>12 Chapas</td>
+                                <td class="font-black text-white">R$ 2.520,00</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">MDF Louro Freijó 18mm (Portas)</td>
+                                <td>Duratex</td>
+                                <td>06 Chapas</td>
+                                <td class="font-black text-white">R$ 1.980,00</td>
+                            </tr>
+                            <tr class="bg-amber-500/5">
+                                <td class="font-bold italic">Fita de Borda Louro Freijó - 22mm</td>
+                                <td><span class="text-amber-500 font-black">Proadec</span></td>
+                                <td>200 metros</td>
+                                <td class="font-black text-amber-500">R$ 440,00</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">Corrediça Invisível C/ Amortecedor</td>
+                                <td>Blum</td>
+                                <td>14 Pares</td>
+                                <td class="font-black text-white">R$ 3.220,00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-gem p-6 flex flex-col justify-center items-center text-center border-dashed border-slate-700">
+                    <i class="fa-solid fa-microchip text-amber-500 mb-2"></i>
+                    <p class="text-[9px] font-black text-slate-500 uppercase">Processamento</p>
+                    <p class="text-xl font-black text-white italic">IA Verificada</p>
+                </div>
+
+                <a href="#" onclick="alert('Gerando PDF Executivo com planos de corte e lista de compras...')" class="md:col-span-2 card-gem p-8 bg-emerald-600 flex items-center justify-between group hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/40">
+                    <div>
+                        <h3 class="text-2xl font-black text-white uppercase italic leading-none mb-1">Liberar Lista de Compras</h3>
+                        <p class="text-emerald-100 text-[10px] font-black uppercase tracking-widest">PDF Pronto para enviar ao fornecedor</p>
+                    </div>
+                    <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-file-pdf text-white text-xl"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalRecarga" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/90 backdrop-blur-sm hidden">
+        <div class="bg-[#1e293b] w-full max-w-md rounded-[2.5rem] border border-slate-700 shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-bolt-lightning text-slate-900"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-black uppercase text-sm">Recarregar Saldo</h3>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Escolha ou digite um valor</p>
+                    </div>
+                </div>
+                <button onclick="fecharModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="setValor(49.90)" class="p-4 bg-slate-900/50 border-2 border-slate-700 rounded-2xl hover:border-amber-500 transition-all text-left">
+                        <p class="text-[9px] font-black text-amber-500 uppercase mb-1">Essencial</p>
+                        <p class="text-white font-black italic">500 créditos</p>
+                        <p class="text-xs text-slate-500">R$ 49,90</p>
+                    </button>
+                    <button onclick="setValor(149.90)" class="p-4 bg-amber-500 border-2 border-amber-500 rounded-2xl text-left shadow-lg">
+                        <p class="text-[9px] font-black text-amber-900 uppercase mb-1">Popular</p>
+                        <p class="text-amber-950 font-black italic">2.000 créditos</p>
+                        <p class="text-xs text-amber-800 font-bold">R$ 149,90</p>
+                    </button>
+                </div>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-black">R$</span>
+                    <input type="number" id="inputValor" oninput="calcularCreditos()" placeholder="0,00" class="input-custom w-full py-4 pl-12 pr-4 rounded-2xl font-black text-lg">
+                </div>
+                <button class="w-full bg-white text-slate-900 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-slate-200 transition-all">
+                    Gerar PIX de Pagamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() { document.getElementById('modalRecarga').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function fecharModal() { document.getElementById('modalRecarga').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+        function setValor(valor) { document.getElementById('inputValor').value = valor; calcularCreditos(); }
+        function calcularCreditos() {
+            const input = document.getElementById('inputValor');
+            const txtCreditos = document.getElementById('qtdCreditos');
+            if(input.value > 0) {
+                let calculo = Math.floor(input.value / 0.075);
+                // lógica apenas ilustrativa para o front-end
+            }
+        }
+    </script>
+</body>
+</html>

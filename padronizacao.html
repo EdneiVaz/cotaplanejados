@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padronização Gem - CotaPlanejados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; padding-top: 80px; }
+        .main-content { padding: 2rem; max-width: 1250px; margin: 0 auto; }
+        .card-standard { background: #1e293b; border: 1px solid #334155; border-radius: 1.5rem; padding: 1.5rem; height: 100%; transition: all 0.3s ease; }
+        .input-gem { background: #0f172a; border: 1px solid #334155; border-radius: 0.75rem; padding: 0.75rem; width: 100%; color: #f1f5f9; font-size: 0.875rem; transition: border-color 0.3s; }
+        .input-gem:focus { outline: none; border-color: #d97706; }
+        .btn-save { background: #d97706; font-weight: 700; transition: all 0.3s; }
+        .btn-save:hover { background: #b45309; transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.4); }
+        
+        /* Cabeçalho Fixo Padronizado */
+        .header-gem { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #334155; }
+    </style>
+</head>
+<body>
+
+    <nav class="header-gem px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <h1 class="text-xl font-black tracking-tighter italic text-white leading-none">
+                CotaPlanejados<span class="text-amber-500">.Gem</span>
+            </h1>
+            <div class="hidden lg:flex items-center gap-1">
+                <a href="dashboard.html" class="px-4 py-2 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-all">Projetos</a>
+                <a href="padronizacao.html" class="px-4 py-2 text-amber-500 bg-amber-500/10 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">Padrões</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3 bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-700">
+                <div class="text-right">
+                    <p class="text-[8px] font-black text-slate-500 uppercase leading-none mb-1">Saldo</p>
+                    <p class="text-sm font-black text-amber-500 leading-none">4810 <span class="text-[9px] text-slate-400 font-normal">créditos</span></p>
+                </div>
+                <div class="w-8 h-8 bg-amber-500/20 text-amber-500 rounded-lg flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all"><i class="fa-solid fa-plus text-xs"></i></div>
+            </div>
+            <div class="w-10 h-10 bg-gradient-to-tr from-amber-600 to-amber-400 rounded-full flex items-center justify-center font-black text-white shadow-lg">M</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="mb-10 flex justify-between items-end">
+            <div>
+                <p class="text-amber-500 text-[10px] font-black uppercase tracking-[0.3em] mb-1">Configuração de Engenharia</p>
+                <h2 class="text-3xl font-black text-white tracking-tight">Padronização de Fabricação</h2>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Base Regional Ativa</p>
+                <p class="text-xs text-emerald-500 font-bold">Sincronizado com Fornecedores</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            
+            <div class="card-standard">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-layer-group text-amber-500"></i>
+                    <h3 class="font-bold text-lg">Espessura de Fundos (MDF)</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Fundos de Gavetas</label>
+                        <select class="input-gem">
+                            <option selected>6mm</option>
+                            <option>15mm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Armários Inferiores</label>
+                        <select class="input-gem">
+                            <option>6mm</option>
+                            <option selected>15mm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Armários Superiores</label>
+                        <select class="input-gem">
+                            <option selected>6mm</option>
+                            <option>15mm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Roupeiros / Closet</label>
+                        <select class="input-gem">
+                            <option>6mm</option>
+                            <option selected>15mm</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-standard">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-screwdriver-wrench text-amber-500"></i>
+                    <h3 class="font-bold text-lg">Tamponamento e Estrutura</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Espessura Externa</label>
+                        <select class="input-gem">
+                            <option selected>15mm</option>
+                            <option>18mm</option>
+                            <option>25mm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Tamponamento Final</label>
+                        <select class="input-gem">
+                            <option value="15">15mm</option>
+                            <option value="18" selected>18mm</option>
+                            <option value="21">21mm (15+6)</option>
+                            <option value="30">30mm (15+15)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+                        <p class="text-[10px] text-amber-500 leading-relaxed font-medium">
+                            <i class="fa-solid fa-microchip mr-2"></i>
+                            <strong>Análise Gem:</strong> O sistema detectará automaticamente se a peça exige <strong>Duplagem</strong> ou <strong>Engrossado</strong> conforme o confinamento (paredes) e faces visíveis.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-standard">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-fill-drip text-amber-500"></i>
+                    <h3 class="font-bold text-lg">Acabamento Interno</h3>
+                </div>
+                <div class="space-y-4">
+                    <select class="input-gem">
+                        <option selected>Branco TX (Padrão Econômico)</option>
+                        <option>Na Mesma Textura Externa (Alto Padrão)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card-standard">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-hand-pointer text-amber-500"></i>
+                    <h3 class="font-bold text-lg">Sistema de Puxadores</h3>
+                </div>
+                <select class="input-gem">
+                    <option value="cava">Cava no MDF (Desconsiderar custos de ferragem)</option>
+                    <option value="perfil">Perfil Alumínio (Cálculo por metro linear)</option>
+                    <option value="unidade">Alça / Ponto / Concha (Cálculo por unidade)</option>
+                    <option value="cliente">O cliente irá comprar (Apenas instalação)</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="mt-10 flex justify-end">
+            <button class="btn-save px-12 py-4 rounded-2xl text-white text-xs uppercase tracking-widest shadow-xl">
+                Atualizar Padronização Gem
+            </button>
+        </div>
+    </main>
+</body>
+</html>

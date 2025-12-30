@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Master - CotaPlanejados.Gem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #080c14; color: #f1f5f9; margin: 0; padding-top: 140px; }
+        
+        .header-gem { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(8, 12, 20, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid #1e293b; }
+
+        /* Barra de Busca Bloqueável */
+        .search-container { transition: all 0.3s ease; }
+        .locked-ui { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+
+        /* Overlay de Travamento (Lockdown) */
+        #lockdownOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 12, 20, 0.9);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .loader-gem {
+            width: 80px;
+            height: 80px;
+            border: 4px solid #1e293b;
+            border-top: 4px solid #f59e0b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .btn-sync {
+            background: #f59e0b;
+            color: #080c14;
+            font-weight: 900;
+            transition: all 0.3s ease;
+        }
+        .btn-sync:disabled { background: #1e293b; color: #475569; cursor: not-allowed; }
+
+        .table-master { width: 100%; border-collapse: separate; border-spacing: 0; background: #0f172a; border: 1px solid #1e293b; border-radius: 1rem; }
+        .table-master td, .table-master th { padding: 15px 20px; border-bottom: 1px solid #1e293b; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div id="lockdownOverlay">
+        <div class="loader-gem mb-6"></div>
+        <h2 class="text-2xl font-black text-white uppercase italic tracking-tighter">Sincronizando Big Data Gem</h2>
+        <p class="text-amber-500 font-bold text-sm mt-2 uppercase tracking-widest">Não feche esta janela. O processo pode levar alguns minutos.</p>
+        <div class="mt-8 w-64 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-500 w-1/3 animate-[pulse_1.5s_infinite]"></div>
+        </div>
+        <p class="text-slate-500 text-[10px] mt-4 uppercase font-black italic">Mapeando texturas Duratex, Arauco e Ferragens Blum/FGV...</p>
+    </div>
+
+    <nav class="header-gem">
+        <div class="px-8 py-4 flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-4">
+                <h1 class="text-xl font-black italic text-white tracking-tighter">Base Master <span class="text-amber-500">AI</span></h1>
+                <div class="bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
+                    <span class="text-[9px] font-black text-emerald-500 uppercase">1 Atualização Grátis/Semana</span>
+                </div>
+            </div>
+            
+            <button onclick="confirmarAtualizacao()" id="btnMainSync" class="btn-sync px-6 py-2.5 rounded-xl text-[11px] uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-arrows-rotate"></i> Atualizar Base
+            </button>
+        </div>
+
+        <div id="topSearchBar" class="px-8 py-3 bg-slate-900/50 flex items-center gap-4">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" placeholder="Pesquisar material na base atualizada..." class="w-full bg-[#080c14] border border-slate-700 rounded-xl py-2.5 pl-12 pr-4 text-sm font-medium focus:border-amber-500 outline-none transition-all">
+            </div>
+            <div class="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase">
+                <i class="fa-solid fa-filter"></i> Filtros
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-[1600px] mx-auto p-8">
+        
+        <div class="category-block">
+            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <div class="w-2 h-2 bg-amber-500 rounded-full"></div> MDF e Revestimentos
+            </h3>
+            <table class="table-master">
+                <thead>
+                    <tr class="text-[10px] font-black text-slate-500 uppercase">
+                        <th>Material</th>
+                        <th>Marca</th>
+                        <th>Fornecedor</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold text-white">Branco TX 15mm</td>
+                        <td>Duratex</td>
+                        <td>Madeiras Pantanal</td>
+                        <td class="text-amber-500 font-black">R$ 210,00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script>
+        // Simulação de controle semanal (em um sistema real viria do banco de dados)
+        let atualizacoesNaSemana = 0;
+
+        function confirmarAtualizacao() {
+            if (atualizacoesNaSemana >= 1) {
+                if (confirm("Você já atingiu o limite de 1 atualização gratuita desta semana. Deseja usar 50 créditos para uma atualização extra?")) {
+                    processarAtualizacao();
+                }
+            } else {
+                if (confirm("ATENÇÃO: Este processo reconstrói toda a base de materiais e pode levar tempo devido ao volume de dados (Big Data). O aplicativo ficará travado durante a operação. Deseja continuar?")) {
+                    processarAtualizacao();
+                }
+            }
+        }
+
+        function processarAtualizacao() {
+            // 1. Trava a UI
+            document.getElementById('lockdownOverlay').style.display = 'flex';
+            document.getElementById('topSearchBar').classList.add('locked-ui');
+            document.getElementById('btnMainSync').disabled = true;
+
+            // 2. Simula o processo de Big Data
+            setTimeout(() => {
+                atualizacoesNaSemana++;
+                alert("Base de materiais atualizada com sucesso! Foram mapeados 12.450 novos itens.");
+                location.reload(); 
+            }, 5000); // 5 segundos para simulação, na real seria conforme a resposta da API
+        }
+    </script>
+</body>
+</html>

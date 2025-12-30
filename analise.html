@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Projeto - CotaPlanejados.Gem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; 
+            color: #f1f5f9; 
+            margin: 0;
+        }
+
+        .premium-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-control {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
+        }
+
+        .drop-zone {
+            border: 2px dashed #334155;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(15, 23, 42, 0.4);
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drop-zone.active { border-color: #d97706; background: rgba(217, 119, 6, 0.05); }
+        .drop-zone.success { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+
+        .btn-amber { 
+            background-color: #d97706; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .btn-amber:hover { 
+            background-color: #b45309; 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.4);
+        }
+
+        .btn-outline-amber {
+            border: 1px solid #d97706;
+            color: #fbbf24;
+            transition: all 0.3s ease;
+        }
+
+        #imagePreview {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+            border-radius: 1.3rem;
+        }
+
+        #gemOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 12, 20, 0.95);
+            z-index: 5000;
+            backdrop-filter: blur(15px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-pulse {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulseIA 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes pulseIA {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(0.9); opacity: 0.5; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6 overflow-y-auto">
+
+    <div id="gemOverlay">
+        <div class="ai-pulse mb-8">
+            <i class="fa-solid fa-brain text-4xl text-slate-900"></i>
+        </div>
+        <h2 class="text-2xl font-black text-white italic tracking-tighter uppercase text-center">Gem AI: Auditoria de Engenharia em Curso</h2>
+        <p id="statusPasso" class="text-amber-500 font-bold text-xs mt-4 uppercase tracking-[0.3em] animate-pulse text-center">Iniciando Varredura...</p>
+        
+        <div class="mt-8 w-64 h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div id="progressGem" class="h-full bg-amber-500 w-0 transition-all duration-700 ease-out"></div>
+        </div>
+        <p class="text-slate-500 text-[10px] mt-6 uppercase font-black tracking-widest text-center px-4">
+            Aguarde. Aplicando Padrões de Fabricação e Cruzando com Base Master de Materiais.
+        </p>
+    </div>
+
+    <div class="max-w-5xl w-full">
+        <header class="flex justify-between items-center mb-10 mt-4">
+            <div class="flex items-center gap-6">
+                <a href="dashboard.html" class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 hover:bg-slate-700 transition-all">
+                    <i class="fa-solid fa-arrow-left text-slate-400"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-white">Adicionar Projeto</h1>
+                    <p class="text-slate-400 font-medium">Configure os detalhes para a nova análise</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="bg-slate-800/80 px-5 py-3 rounded-2xl border border-slate-700 flex items-center gap-4">
+                    <div class="text-right border-r border-slate-700 pr-4">
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Saldo Atual</p>
+                        <p class="text-xl font-black text-amber-500 leading-none">5</p>
+                    </div>
+                    <i class="fa-solid fa-coins text-2xl text-amber-600"></i>
+                </div>
+                <a href="#" class="btn-outline-amber px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-rotate text-xs"></i> Recarregar
+                </a>
+            </div>
+        </header>
+
+        <div class="premium-card p-10 mb-10">
+            <form id="mainProjectForm" class="space-y-10" onsubmit="event.preventDefault(); iniciarAuditoria();">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest">Nome do Projeto</label>
+                        <input type="text" id="projName" class="input-control" placeholder="Ex: Loft Industrial - Unidade 402" required>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest">Arquiteto / Responsável</label>
+                        <input type="text" class="input-control" placeholder="Nome do profissional">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest">1. Imagem de Capa (Visual)</label>
+                        <div class="drop-zone" id="dropZoneImg">
+                            <img id="imagePreview" src="#" alt="Preview">
+                            <div id="uploadContentImg" class="flex flex-col items-center">
+                                <i class="fa-solid fa-camera text-3xl text-amber-500 mb-3"></i>
+                                <p class="text-white text-sm font-bold">Carregar Imagem</p>
+                                <p class="text-slate-500 text-[10px] uppercase mt-2">Aparecerá no Dashboard</p>
+                            </div>
+                            <input type="file" id="fileImg" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest">2. Arquivo do Projeto (Técnico)</label>
+                        <div class="drop-zone" id="dropZoneDoc">
+                            <div class="flex flex-col items-center">
+                                <i class="fa-solid fa-file-pdf text-3xl text-amber-500 mb-3" id="iconDoc"></i>
+                                <p class="text-white text-sm font-bold" id="textDoc">Anexar Projeto</p>
+                                <p class="text-slate-500 text-[10px] uppercase mt-2">PDF, SKP, DWG ou Imagens</p>
+                            </div>
+                            <input type="file" id="fileDoc" class="hidden">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest">Observações Técnicas</label>
+                    <textarea class="input-control h-28 resize-none" placeholder="Ex: Acabamento em laca, puxadores cava..."></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-6 border-t border-slate-700/50">
+                    <div class="flex flex-col">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Custo da operação</p>
+                        <p class="text-sm font-black text-white">1 CRÉDITO <span class="text-amber-500 ml-1 text-xs font-medium">(R$ 4,90)</span></p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" onclick="window.location.href='dashboard.html'" class="px-8 py-4 rounded-xl text-slate-400 font-bold text-xs uppercase hover:text-white transition-all">Cancelar</button>
+                        <button type="submit" class="btn-amber px-10 py-4 rounded-2xl text-white font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 shadow-xl shadow-amber-900/40">
+                            <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                            Iniciar Análise Inteligente
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function iniciarAuditoria() {
+            const overlay = document.getElementById('gemOverlay');
+            const status = document.getElementById('statusPasso');
+            const progress = document.getElementById('progressGem');
+
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => { status.innerText = "Lendo Dimensões e Geometria..."; progress.style.width = "20%"; }, 800);
+            setTimeout(() => { status.innerText = "Aplicando Regras de Fita (Proadec/Rehau)..."; progress.style.width = "40%"; }, 2200);
+            setTimeout(() => { status.innerText = "Ajustando: Branco TX em internos e Fita de Cor em externos..."; progress.style.width = "65%"; }, 3800);
+            setTimeout(() => { status.innerText = "Calculando Engrossos e Fitas de 35mm/65mm..."; progress.style.width = "85%"; }, 5200);
+            setTimeout(() => { status.innerText = "Finalizando Relatório Executivo..."; progress.style.width = "100%"; }, 6800);
+
+            setTimeout(() => { window.location.href = 'relatorio.html'; }, 7800);
+        }
+
+        // Lógica de Upload Imagem
+        const dzImg = document.getElementById('dropZoneImg');
+        const fileImg = document.getElementById('fileImg');
+        const imgPrev = document.getElementById('imagePreview');
+        const contentImg = document.getElementById('uploadContentImg');
+        dzImg.onclick = () => fileImg.click();
+        fileImg.onchange = e => {
+            const [file] = fileImg.files;
+            if (file) {
+                imgPrev.src = URL.createObjectURL(file);
+                imgPrev.style.display = 'block';
+                contentImg.style.display = 'none';
+                dzImg.classList.add('success');
+            }
+        };
+
+        // Lógica de Upload Documento
+        const dzDoc = document.getElementById('dropZoneDoc');
+        const fileDoc = document.getElementById('fileDoc');
+        const iconDoc = document.getElementById('iconDoc');
+        const textDoc = document.getElementById('textDoc');
+        dzDoc.onclick = () => fileDoc.click();
+        fileDoc.onchange = e => {
+            const [file] = fileDoc.files;
+            if (file) {
+                iconDoc.className = "fa-solid fa-file-circle-check text-3xl text-emerald-400 mb-3";
+                textDoc.innerText = file.name;
+                dzDoc.classList.add('success');
+            }
+        };
+    </script>
+</body>
+</html>

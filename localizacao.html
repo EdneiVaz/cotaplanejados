@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibrando Sistema - CotaPlanejados.Gem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; 
+            color: #f1f5f9; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .location-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .input-cep {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1rem;
+            width: 100%;
+            color: white;
+            text-align: center;
+            font-size: 1.25rem;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+        }
+
+        .input-cep:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
+        }
+
+        .btn-amber { background-color: #d97706; transition: all 0.3s ease; }
+        .btn-amber:hover { background-color: #b45309; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <div class="location-card">
+        <div class="mb-8">
+            <h1 class="text-2xl font-black tracking-tighter italic text-white leading-none">
+                CotaPlanejados<span class="text-amber-500">.Gem</span>
+            </h1>
+        </div>
+
+        <div id="gpsState">
+            <div class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-location-dot text-3xl text-amber-500 pulse-icon"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2">Localizando Fornecedores</h2>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                Estamos calibrando sua base de preços regional. Por favor, autorize o acesso à sua localização.
+            </p>
+            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Aguardando GPS...</div>
+        </div>
+
+        <div id="cepState" class="hidden">
+            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-map-pin text-3xl text-red-500"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2">Informe seu CEP</h2>
+            <p class="text-slate-400 text-sm leading-relaxed mb-8">
+                Não conseguimos acessar seu GPS. Digite seu CEP para carregar os materiais da sua região.
+            </p>
+            
+            <form id="cepForm" class="space-y-4">
+                <input type="text" id="cepInput" class="input-cep" placeholder="00000-000" maxlength="9">
+                <button type="submit" class="btn-amber w-full py-4 rounded-2xl text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-amber-900/20">
+                    Carregar Base Regional
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const gpsState = document.getElementById('gpsState');
+        const cepState = document.getElementById('cepState');
+        const cepInput = document.getElementById('cepInput');
+
+        // Função para simular o redirecionamento após carregar dados
+        function finalizarLocalizacao() {
+            // Aqui o Gem salvaria a data (regra dos 15 dias) e o local no Firebase
+            window.location.href = 'dashboard.html';
+        }
+
+        // Tenta pegar localização real
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log("Localizado via GPS");
+                    setTimeout(finalizarLocalizacao, 2000); // Simula loading
+                },
+                (error) => {
+                    console.log("GPS negado ou falhou");
+                    gpsState.classList.add('hidden');
+                    cepState.classList.remove('hidden');
+                }
+            );
+        } else {
+            gpsState.classList.add('hidden');
+            cepState.classList.remove('hidden');
+        }
+
+        // Máscara simples para CEP
+        cepInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('cepForm').onsubmit = (e) => {
+            e.preventDefault();
+            if (cepInput.value.length === 9) {
+                finalizarLocalizacao();
+            } else {
+                alert("Por favor, digite um CEP válido.");
+            }
+        };
+    </script>
+</body>
+</html>
